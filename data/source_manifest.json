@@ -1,0 +1,25 @@
+{
+  "captured_at": "2026-11-03T16:53:51.736385+00:00",
+  "sources": [
+    {
+      "name": "OpenPhish public feed",
+      "url": "https://openphish.com/feed.txt",
+      "path": "data\\raw\\openphish_feed.txt",
+      "sha256": "8fadb80ff4c8dfa3d27b12be8deaa02dc9e278662345476d49742972e1ffb157"
+    },
+    {
+      "name": "Tranco top-sites list",
+      "url": "https://tranco-list.eu/download/daily/top-1m.csv.zip",
+      "path": "data\\raw\\tranco_top1m.csv.zip",
+      "sha256": "fb13748679f7b9d165c8997d5e2d37f745e970085b4fb856203175aa57408112"
+    }
+  ],
+  "dataset": {
+    "output": "data\\real_urls.csv",
+    "phishing_domains": 216,
+    "legitimate_domains": 1080,
+    "total_samples": 1296,
+    "captured_at": "2026-11-03T16:53:51.736385+00:00"
+  },
+  "labeling_note": "OpenPhish entries are phishing feed labels. Tranco entries are weak legitimate candidates, not verified benign URLs."
+}

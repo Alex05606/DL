@@ -1,0 +1,27 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Node.js
+node_modules/
+
+# Local configuration
+.env
+.env.*
+!.env.example
+
+# Downloaded/generated training data
+/data/raw/
+/data/real_urls.csv
+
+# Trained model and evaluation output
+/models/*.joblib
+/models/evaluation.json
+
+# Generated frontend assets
+/phishguardz/static/
