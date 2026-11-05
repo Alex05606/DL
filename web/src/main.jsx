@@ -288,6 +288,7 @@ function ResultSection({ data, onNewCheck, onToast }) {
   const indicators = Array.isArray(data.indicators) && data.indicators.length
     ? data.indicators
     : ["No lexical indicators returned"];
+  const analysis = Array.isArray(data.analysis) ? data.analysis : [];
   const gaugeColor = ["CRITICAL", "HIGH"].includes(level)
     ? "var(--danger)"
     : level === "MEDIUM"
@@ -366,14 +367,31 @@ function ResultSection({ data, onNewCheck, onToast }) {
         <div className="signals-block">
           <div className="signals-heading">
             <div>
-              <span className="section-kicker">WHAT STOOD OUT</span>
-              <h3>URL indicators</h3>
+              <span className="section-kicker">DETAILS BEHIND THE CHECK</span>
+              <h3>URL analysis</h3>
             </div>
-            <span className="signals-note">Lexical clues, not page content</span>
+            <span className="signals-note">URL text only · no DNS lookup</span>
           </div>
-          <ul className="indicator-list">
-            {indicators.map((indicator, index) => <li key={`${indicator}-${index}`}>{indicator}</li>)}
-          </ul>
+          {analysis.length > 0 ? (
+            <ul className="analysis-list">
+              {analysis.map((signal, index) => (
+                <li className={`analysis-item analysis-${signal.status}`} key={`${signal.title}-${index}`}>
+                  <span className="analysis-status" aria-hidden="true" />
+                  <span className="analysis-copy">
+                    <strong>{signal.title}</strong>
+                    <span>{signal.detail}</span>
+                  </span>
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <ul className="indicator-list">
+              {indicators.map((indicator, index) => <li key={`${indicator}-${index}`}>{indicator}</li>)}
+            </ul>
+          )}
+          <p className="analysis-note">
+            These checks describe URL features that may be relevant; they are not a breakdown of the model's individual decision.
+          </p>
         </div>
         <div className="checked-url">
           <span>CHECKED URL</span>

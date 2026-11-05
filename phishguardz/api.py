@@ -35,7 +35,11 @@ def score(payload: ScoreRequest) -> Dict[str, Any]:
     if not os.path.exists(MODEL_PATH):
         raise HTTPException(
             status_code=503,
-            detail="Model not trained yet. Run: python -m phishguardz.train --dataset data/real_urls.csv",
+            detail=(
+                "Model not trained yet. Run `python -m phishguardz.fetch_data`, "
+                "`python -m phishguardz.prepare_data`, then "
+                "`python -m phishguardz.train`."
+            ),
         )
     try:
         return _load_model().score_url(payload.url)
@@ -45,6 +49,10 @@ def score(payload: ScoreRequest) -> Dict[str, Any]:
 
 app.mount(
     "/",
-    StaticFiles(directory=Path(__file__).resolve().parent / "static", html=True),
+    StaticFiles(
+        directory=Path(__file__).resolve().parent / "static",
+        html=True,
+        check_dir=False,
+    ),
     name="website",
 )

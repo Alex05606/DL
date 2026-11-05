@@ -23,7 +23,7 @@ from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import StandardScaler
 from sklearn.feature_extraction.text import TfidfVectorizer
 
-from .features import extract_url_features, registered_domain, risk_indicators
+from .features import analyze_url, extract_url_features, registered_domain, risk_indicators
 
 NUMERIC_FEATURES = [
     "url_length",
@@ -326,6 +326,7 @@ class PhishGuardModel:
             "is_ood": bool(ood_score >= 0.95),
             "ood_score": round(ood_score, 4),
             "indicators": risk_indicators(url),
+            "analysis": analyze_url(url),
         }
 
 
