@@ -9,9 +9,23 @@ The training pipeline fetches:
 - **OpenPhish public feed** for currently reported phishing URLs.
 - **Tranco top-sites list** for legitimate-domain candidates. These are weak labels: a highly ranked domain is not guaranteed harmless, and this source is not equivalent to a verified benign URL feed.
 
-The dataset builder uses one URL per registered domain, removes domains present in both sources, and records the source and collection time. Tranco supplies domains rather than full URLs, so the builder represents each candidate as its HTTPS origin (`https://domain/`); it does not fetch or verify the page. These are real ranked domains but weakly labeled URLs, not a verified benign browsing corpus. Source checksums are saved in `data/source_manifest.json`; source files are saved under `data/raw/`; the generated dataset is `data/real_urls.csv`.
+The dataset builder removes domains present in both sources and records the source and collection time. Tranco supplies domains rather than full URLs, so each candidate is represented by its apex and `www` HTTPS origins; the builder does not fetch or verify either page. These are real ranked domains but weakly labeled URLs, not a verified benign browsing corpus. Source checksums are saved in `data/source_manifest.json`; source files are saved under `data/raw/`; the generated dataset is `data/real_urls.csv`. Both URL variants stay in the same registered-domain split during training and evaluation.
+
+## Quick start
+
+The repository includes the training dataset, its source snapshots, the trained
+model, and a built frontend. To run the app locally, install the Python
+requirements and start it:
+
+```powershell
+python -m pip install -r requirements.txt
+python main.py
+```
 
 ## Train the model
+
+Retraining is optional. The following steps rebuild the model from the included
+data:
 
 From this directory:
 
@@ -57,9 +71,9 @@ From the project directory, run:
 python main.py
 ```
 
-`main.py` checks for the trained model, rebuilds the React frontend if its source is newer than the existing build, starts FastAPI, and opens the site in your browser. Press `Ctrl+C` in the terminal to stop it. If port 8000 is occupied, it tries ports 8001 through 8010. You can choose a port explicitly with `$env:PHISHGUARD_PORT=8012`.
+`main.py` checks for the trained model, uses the included React frontend bundle, starts FastAPI, and opens the site in your browser. If you have frontend dependencies installed and its source is newer than the bundle, it rebuilds the frontend. Press `Ctrl+C` in the terminal to stop it. If port 8000 is occupied, it tries ports 8001 through 8010. You can choose a port explicitly with `$env:PHISHGUARD_PORT=8012`.
 
-The React source is in `web/src/`; Vite writes the production bundle into the FastAPI static directory. On first setup, install frontend dependencies with `npm ci`; install backend dependencies with `python -m pip install -r requirements.txt`.
+The React source is in `web/src/`; its built production bundle is included in `phishguardz/static/`. To rebuild or develop the frontend, install dependencies with `npm ci` and run `npm run build`.
 
 The website shows risk probability, model confidence, novelty, URL indicators, and recent checks stored only in that browser. It sends the URL to the local PhishGuard-Z API for lexical scoring; it does not navigate to or fetch the submitted destination.
 

@@ -14,14 +14,3 @@ node_modules/
 .env
 .env.*
 !.env.example
-
-# Downloaded/generated training data
-/data/raw/
-/data/real_urls.csv
-
-# Trained model and evaluation output
-/models/*.joblib
-/models/evaluation.json
-
-# Generated frontend assets
-/phishguardz/static/

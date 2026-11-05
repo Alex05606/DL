@@ -32,6 +32,10 @@ def ensure_frontend_build() -> None:
     newest_output = max((path.stat().st_mtime for path in output_files), default=0)
     if output_dir.joinpath("index.html").is_file() and newest_output >= newest_source:
         return
+    if output_dir.joinpath("index.html").is_file() and not (
+        PROJECT_ROOT / "node_modules"
+    ).is_dir():
+        return
 
     print("Building the React frontend...")
     if not (PROJECT_ROOT / "node_modules").is_dir():
@@ -82,7 +86,8 @@ def main() -> None:
     if not model_path.is_file():
         raise FileNotFoundError(
             f"Trained model not found: {model_path}. Train it first with "
-            "`python -m phishguardz.train --dataset data/real_urls.csv`."
+            "`python -m phishguardz.fetch_data`, `python -m phishguardz.prepare_data`, "
+            "then `python -m phishguardz.train`."
         )
 
     ensure_frontend_build()
