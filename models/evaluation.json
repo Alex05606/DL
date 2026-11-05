@@ -1,0 +1,64 @@
+{
+  "model_path": "models\\phishguardz.joblib",
+  "dataset_path": "data\\real_urls.csv",
+  "dataset_sha256": "d3d375958fd3cbf126122a7c29909465fa96eb14aa84046446e5f166621f9c67",
+  "source_manifest_path": "data\\source_manifest.json",
+  "model_metadata": {
+    "dataset": "C:\\DL\\PhishGuard-Z\\data\\real_urls.csv",
+    "trained_samples": 1485,
+    "trained_domains": 837,
+    "calibration_samples": 495,
+    "calibration_domains": 279,
+    "class_counts": {
+      "legitimate": 1350,
+      "phishing": 135
+    },
+    "split_strategy": "stratified registered-domain-disjoint train/calibration/test",
+    "model_type": "character n-gram TF-IDF + URL lexical features + calibrated logistic regression",
+    "feature_count": 25,
+    "ood_method": "isolation forest percentile against training URL feature distribution",
+    "metrics": {
+      "train_domains": 837,
+      "calibration_domains": 279,
+      "test_domains": 279,
+      "train_samples": 1485,
+      "calibration_samples": 495,
+      "test_samples": 495,
+      "test_phishing_samples": 45,
+      "test_legitimate_samples": 450,
+      "test_precision": 1.0,
+      "test_recall": 0.7777777777777778,
+      "test_f1": 0.875,
+      "test_false_positive_rate": 0.0,
+      "test_false_negative_rate": 0.2222222222222222,
+      "test_roc_auc": 0.976,
+      "test_pr_auc": 0.916851946792891,
+      "test_brier_score": 0.018186973450042065,
+      "test_expected_calibration_error_10_bins": 0.015398353951409854
+    }
+  },
+  "held_out_domain_metrics": {
+    "train_domains": 837,
+    "calibration_domains": 279,
+    "test_domains": 279,
+    "train_samples": 1485,
+    "calibration_samples": 495,
+    "test_samples": 495,
+    "test_phishing_samples": 45,
+    "test_legitimate_samples": 450,
+    "test_precision": 1.0,
+    "test_recall": 0.7777777777777778,
+    "test_f1": 0.875,
+    "test_false_positive_rate": 0.0,
+    "test_false_negative_rate": 0.2222222222222222,
+    "test_roc_auc": 0.976,
+    "test_pr_auc": 0.916851946792891,
+    "test_brier_score": 0.018186973450042065,
+    "test_expected_calibration_error_10_bins": 0.015398353951409854
+  },
+  "caveats": [
+    "The test split is domain-disjoint but is not a temporal test.",
+    "Tranco top-ranked domains are weak legitimate labels, not verified safety labels.",
+    "OpenPhish coverage is a live-feed snapshot and does not represent every phishing family."
+  ]
+}
