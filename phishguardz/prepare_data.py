@@ -91,6 +91,8 @@ def prepare_dataset(
             file, fieldnames=["url", "label", "domain", "source", "observed_at"]
         )
         writer.writeheader()
+        phishing_samples = 0
+        legitimate_samples = 0
         for domain, url in sorted(phishing.items()):
             writer.writerow(
                 {
@@ -101,22 +103,27 @@ def prepare_dataset(
                     "observed_at": captured_at,
                 }
             )
+            phishing_samples += 1
         for domain in legitimate:
-            writer.writerow(
-                {
-                    "url": "https://" + domain + "/",
-                    "label": "legitimate",
-                    "domain": domain,
-                    "source": "Tranco top-sites ranking (weak label)",
-                    "observed_at": captured_at,
-                }
-            )
+            for url in (f"https://{domain}/", f"https://www.{domain}/"):
+                writer.writerow(
+                    {
+                        "url": url,
+                        "label": "legitimate",
+                        "domain": domain,
+                        "source": "Tranco top-sites ranking (weak label)",
+                        "observed_at": captured_at,
+                    }
+                )
+                legitimate_samples += 1
 
     result: dict[str, int | str] = {
         "output": str(output_path),
         "phishing_domains": len(phishing),
         "legitimate_domains": len(legitimate),
-        "total_samples": len(phishing) + len(legitimate),
+        "phishing_samples": phishing_samples,
+        "legitimate_samples": legitimate_samples,
+        "total_samples": phishing_samples + legitimate_samples,
         "captured_at": captured_at,
     }
     manifest = {
@@ -138,7 +145,8 @@ def prepare_dataset(
         "dataset": result,
         "labeling_note": (
             "OpenPhish entries are phishing feed labels. Tranco entries are weak "
-            "legitimate candidates, not verified benign URLs."
+            "legitimate candidates, not verified benign URLs. Each Tranco domain is "
+            "represented by both its apex and www HTTPS origin; neither is fetched."
         ),
     }
     manifest_path = output_path.parent / "source_manifest.json"

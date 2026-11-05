@@ -127,3 +127,79 @@ def risk_indicators(url: str) -> list[str]:
     if not indicators:
         indicators.append("no strong lexical indicators")
     return indicators
+
+
+def analyze_url(url: str) -> list[dict[str, str]]:
+    normalized, parsed = parse_url(url)
+    hostname = (parsed.hostname or "").lower().rstrip(".")
+    extracted = _EXTRACT(hostname)
+    suffix = extracted.suffix.lower()
+    domain = extracted.top_domain_under_public_suffix.lower()
+    features = extract_url_features(normalized)
+    signals: list[dict[str, str]] = []
+
+    def add(title: str, detail: str, status: str = "info") -> None:
+        signals.append({"title": title, "detail": detail, "status": status})
+
+    add(
+        "URL length",
+        f"{len(normalized)} characters"
+        + ("; unusually long URLs can obscure their destination" if len(normalized) > 100 else ""),
+        "warning" if len(normalized) > 100 else "info",
+    )
+    add(
+        "Connection scheme",
+        "HTTPS is requested; this encrypts the connection but does not prove the site is trustworthy."
+        if parsed.scheme.lower() == "https"
+        else "HTTP does not request an encrypted connection.",
+        "info" if parsed.scheme.lower() == "https" else "warning",
+    )
+
+    if features["ip_address_host"]:
+        add("Hostname", "Uses an IPv4 address instead of a domain name.", "warning")
+    else:
+        add("Hostname", hostname)
+
+    if suffix and suffix.split(".")[-1] in SUSPICIOUS_TLDS:
+        add("Top-level domain", f".{suffix.split('.')[-1]} is in the app's heuristic watchlist.", "warning")
+    else:
+        add("Top-level domain", f".{suffix.split('.')[-1]}" if suffix else "No recognized public suffix")
+
+    matched_keywords = sorted(keyword for keyword in SUSPICIOUS_KEYWORDS if keyword in normalized.lower())
+    if matched_keywords:
+        add("Sensitive words", ", ".join(matched_keywords), "warning")
+    else:
+        add("Sensitive words", "No credential- or payment-related keywords found.")
+
+    if "@" in normalized:
+        add("At-sign", "An @ symbol can make the apparent and actual URL destination easy to confuse.", "warning")
+    if features["hostname_has_punycode"]:
+        add("Internationalized hostname", "Contains an xn-- label (punycode); check for look-alike characters.", "warning")
+    if features["double_dot"]:
+        add("Hostname formatting", "Contains consecutive dots.", "warning")
+
+    brand = next(
+        (
+            candidate
+            for candidate in BRAND_HINTS
+            if candidate in hostname and domain != candidate and not domain.startswith(candidate + ".")
+        ),
+        None,
+    )
+    if brand:
+        add("Brand/domain mismatch", f"'{brand}' appears in the hostname, but the registered domain is {domain}.", "warning")
+
+    subdomain_count = int(features["subdomain_count"])
+    add(
+        "Subdomains",
+        f"{subdomain_count} subdomain label(s)"
+        + ("; unusually nested hostnames can make the registered domain harder to spot" if subdomain_count >= 3 else ""),
+        "warning" if subdomain_count >= 3 else "info",
+    )
+
+    add(
+        "DNS / website content",
+        "Not checked. This analysis uses the URL text only; it does not resolve DNS or visit the site.",
+        "unavailable",
+    )
+    return signals

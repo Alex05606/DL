@@ -18,7 +18,9 @@ def main() -> None:
         if not args.train_dataset:
             raise FileNotFoundError(
                 "Model file does not exist and no --train-dataset was supplied. "
-                "Train the model first with: python -m phishguardz.train --dataset data/real_urls.csv"
+                "Build the dataset with `python -m phishguardz.fetch_data` and "
+                "`python -m phishguardz.prepare_data`, then train with "
+                "`python -m phishguardz.train`."
             )
         from .model import train_and_save
         train_and_save(args.train_dataset, args.model)

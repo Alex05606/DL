@@ -75,7 +75,7 @@ python main.py
 
 The React source is in `web/src/`; its built production bundle is included in `phishguardz/static/`. To rebuild or develop the frontend, install dependencies with `npm ci` and run `npm run build`.
 
-The website shows risk probability, model confidence, novelty, URL indicators, and recent checks stored only in that browser. It sends the URL to the local PhishGuard-Z API for lexical scoring; it does not navigate to or fetch the submitted destination.
+The website shows risk probability, model confidence, novelty, URL-structure checks, and recent checks stored only in that browser. The analysis reports visible signals such as URL length, scheme, suspicious words, and domain formatting. It uses URL text only: it does not resolve DNS or visit the submitted destination, and the listed checks are not a feature-by-feature explanation of the model's prediction.
 
 The web app is served by the same API process, so `/score` and the website share one origin. Set `PHISHGUARD_MODEL` to use a model file at a different path.
 
